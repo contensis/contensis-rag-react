@@ -1,0 +1,33 @@
+{
+  "name": "contensis-rag-react",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/contensis-rag-react.d.ts",
+  "scripts": {
+    "prebuild": "tsc --emitDeclarationOnly",
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/node": "^24.5.1",
+    "@types/react": "^19.1.13",
+    "rollup-plugin-dts": "^6.2.3",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.2"
+  }
+}
