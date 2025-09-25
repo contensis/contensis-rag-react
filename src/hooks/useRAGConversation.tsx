@@ -27,6 +27,7 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
 
         const response = await fetch(`${baseUrl}/query-collection?${query}`, {
           method: "GET",
+          credentials: 'include',
           headers: {
             Accept: "text/event-stream",
           },
