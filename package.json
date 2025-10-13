@@ -29,5 +29,8 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.7.5"
   }
 }

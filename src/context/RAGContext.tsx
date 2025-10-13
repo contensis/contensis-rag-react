@@ -1,8 +1,8 @@
 const BASE_URL = "http://rag-api.insytful.com/api/v1";
 import React, { createContext, useContext } from "react";
 
-type RAGConfig = {
-  config: string;
+export type RAGConfig = {
+  config: { collection: string; preVectorised?: boolean };
   baseUrl?: string;
 };
 
@@ -14,8 +14,8 @@ export const RAGProvider = ({
   config,
 }: {
   children: React.ReactNode;
-  config: string;
-  baseUrl?: string;
+  config: RAGConfig["config"];
+  baseUrl?: RAGConfig["baseUrl"];
 }) => {
   return (
     <RAGContext.Provider value={{ config, baseUrl }}>

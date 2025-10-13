@@ -1,9 +1,13 @@
 import { useCallback, useState } from "react";
+import { RAGConfig } from "../context/RAGContext";
 
 const history = false;
 const stream = true;
 
-export const useRAGResponse = (config: string, baseUrl: string) => {
+export const useRAGResponse = (
+  config: RAGConfig["config"],
+  baseUrl: string
+) => {
   const [response, setResponse] = useState<string>(""); // accumulated streamed text
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,14 +21,14 @@ export const useRAGResponse = (config: string, baseUrl: string) => {
       try {
         const query = new URLSearchParams({
           question: question,
-          config: config,
+          config: config.collection,
           history: String(history),
           stream: String(stream),
         }).toString();
 
         const payload = await fetch(`${baseUrl}/query-collection?${query}`, {
           method: "GET",
-          credentials: 'include',
+          credentials: "include",
           headers: {
             Accept: "text/event-stream",
           },
