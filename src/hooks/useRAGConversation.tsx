@@ -25,13 +25,24 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
           stream: String(true),
         }).toString();
 
+        const headers: HeadersInit = {
+            Accept: "text/event-stream",
+          };
+
+        const sid = localStorage.getItem('rag-session-id');
+        if(sid) {
+          headers['X-Session-Id'] = sid;
+        }
+
         const response = await fetch(`${baseUrl}/query-collection?${query}`, {
           method: "GET",
-          credentials: 'include',
-          headers: {
-            Accept: "text/event-stream",
-          },
+          headers,
         });
+
+        if(response.headers.has('X-Session-Id')) {
+          // biome-ignore lint/style/noNonNullAssertion: We've just checked above.
+          localStorage.setItem('rag-session-id', response.headers.get('X-Session-Id')!);
+        }
 
         if (!response.body) throw new Error("No response body");
 
@@ -86,7 +97,7 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
         setLoading(false);
       }
     },
-    [config]
+    [config, baseUrl]
   );
 
   return { messages, loading, error, ask };
