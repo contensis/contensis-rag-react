@@ -11,40 +11,6 @@ It also includes a `RAGProvider` and context hooks for cleaner integration.
 
 ---
 
-# 🚀 Development & Release Workflow
-
-To keep contributions and releases consistent, follow this workflow when pushing changes:
-
-## **1. Commit your feature or fix**
-Use clear, conventional commit messages. 
-
-```bash
-git add .
-git commit -m "feat: integration for XYZ"
-```
-
-## **2. Build the project**
-Run the build step and commit build output separately as a chore commit.
-```bash
-npm run build
-git add dist
-git commit -m "chore: build output"
-```
-
-## **3. Bump the package version**
-Use npm versioning to increment your package version:
-```bash
-npm version patch   # or minor | major
-```
-This creates a commit + tag automatically.
-
-## **4. Push everything**
-```bash
-git push --follow-tags
-```
-
----
-
 ## 🚀 Installation
 
 ```bash
