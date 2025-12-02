@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 type Message = {
   role: "user" | "assistant";
@@ -10,29 +11,37 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
   const ask = useCallback(
     async (question: string) => {
+
+      let recaptchaToken: string | null = null;
+      if (recaptchaToken && executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha("rag_search");
+      }
+
       // add the user’s message immediately
       setMessages((prev) => [...prev, { role: "user", content: question }]);
       setLoading(true);
       setError(null);
 
       try {
-        const query = new URLSearchParams({
-          question: question,
-          config: config,
+        const params = new URLSearchParams({
+          question,
+          config,
           history: String(true),
           stream: String(true),
-        }).toString();
+        });
 
-        const headers: HeadersInit = {
-            Accept: "text/event-stream",
-          };
+        // only include token if we generated one
+        if (recaptchaToken) { params.append("recaptchaToken", recaptchaToken); }
+
+        const query = params.toString();
+        const headers: HeadersInit = { Accept: "text/event-stream" };
 
         const sid = localStorage.getItem('rag-session-id');
-        if(sid) {
-          headers['X-Session-Id'] = sid;
-        }
+        if (sid) headers['X-Session-Id'] = sid;
 
         const response = await fetch(`${baseUrl}/query-collection?${query}`, {
           method: "GET",
