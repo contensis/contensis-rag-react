@@ -1,54 +1,54 @@
-name: Build and Version Bump
+# name: Build and Version Bump
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      skip-build:
-        description: "Skip build step"
-        required: false
-        default: "false"
-      bump-version:
-        description: "Automatically bump version"
-        required: false
-        default: "false"
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch:
+#     inputs:
+#       skip-build:
+#         description: "Skip build step"
+#         required: false
+#         default: "false"
+#       bump-version:
+#         description: "Automatically bump version"
+#         required: false
+#         default: "false"
 
-jobs:
-  build:
-    if: "!contains(github.event.head_commit.message, '[skip-ci]')"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+# jobs:
+#   build:
+#     if: "!contains(github.event.head_commit.message, '[skip-ci]')"
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+#         with:
+#           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
+#       - name: Install dependencies
+#         run: npm ci
 
-      - name: Run build
-        run: npm run build
+#       - name: Run build
+#         run: npm run build
 
-      - name: Bump version and push tag
-        if: ${{ github.event.inputs.bump-version == 'true' }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          npm version patch -m "ci: bump version to %s [skip ci]"
-          git push origin HEAD --tags
+#       - name: Bump version and push tag
+#         if: ${{ github.event.inputs.bump-version == 'true' }}
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#           npm version patch -m "ci: bump version to %s [skip ci]"
+#           git push origin HEAD --tags
 
-      - name: Publish package
-        if: ${{ github.event.inputs.bump-version == 'true' }}
-        run: |
-          npm ci
-          npm run build
-          npm publish
+#       - name: Publish package
+#         if: ${{ github.event.inputs.bump-version == 'true' }}
+#         run: |
+#           npm ci
+#           npm run build
+#           npm publish
