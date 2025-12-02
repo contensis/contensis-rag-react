@@ -1,9 +1,10 @@
 import React from 'react';
 
-declare const RAGProvider: ({ children, baseUrl, config, }: {
+declare const RAGProvider: ({ children, baseUrl, config, recaptchaSiteKey, }: {
     children: React.ReactNode;
     config: string;
     baseUrl?: string;
+    recaptchaSiteKey?: string;
 }) => React.JSX.Element;
 
 declare const useRAGResponseContext: () => {
