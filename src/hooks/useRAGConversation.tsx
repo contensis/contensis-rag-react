@@ -17,7 +17,7 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
     async (question: string) => {
 
       let recaptchaToken: string | null = null;
-      if (recaptchaToken && executeRecaptcha) {
+      if (executeRecaptcha) {
         recaptchaToken = await executeRecaptcha("rag_search");
       }
 
