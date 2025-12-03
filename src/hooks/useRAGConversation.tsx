@@ -34,14 +34,14 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
           stream: String(true),
         });
 
-        // only include token if we generated one
-        if (recaptchaToken) { params.append("recaptchaToken", recaptchaToken); }
-
         const query = params.toString();
-        const headers: HeadersInit = { Accept: "text/event-stream" };
+        const headers = new Headers({ Accept: "text/event-stream" });
+
+        // only include token if we generated one
+        if (recaptchaToken) headers.append("X-Recaptcha-Token", recaptchaToken);
 
         const sid = localStorage.getItem('rag-session-id');
-        if (sid) headers['X-Session-Id'] = sid;
+        if (sid) headers.append('X-Session-Id', sid);
 
         const response = await fetch(`${baseUrl}/query-collection?${query}`, {
           method: "GET",
