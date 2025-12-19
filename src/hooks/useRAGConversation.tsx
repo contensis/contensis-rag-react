@@ -13,8 +13,15 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
 
     const { executeRecaptcha } = useGoogleReCaptcha();
 
+  /**
+ * Asks a question and returns a response.
+ *
+ * @param question - The user’s question.
+ * @param sections - Optional list of section slugs to scope the question.
+ * @returns A promise that resolves when the request completes.
+ */
   const ask = useCallback(
-    async (question: string) => {
+    async (question: string, sections?: string[]) => {
 
       let recaptchaToken: string | null = null;
       if (executeRecaptcha) {
@@ -33,6 +40,10 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
           history: String(true),
           stream: String(true),
         });
+
+        if (sections && sections?.length >= 1) {
+          params.set('sections', sections.join(','))
+        }
 
         const query = params.toString();
         const headers = new Headers({ Accept: "text/event-stream" });
