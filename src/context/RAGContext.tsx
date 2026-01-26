@@ -21,20 +21,25 @@ export const RAGProvider = ({
   baseUrl?: string;
   recaptchaSiteKey?: string;
 }) => {
-  return (
-    <GoogleReCaptchaProvider
-      reCaptchaKey={recaptchaSiteKey || ""}
-      scriptProps={{
-        async: true,
-        defer: true,
-        appendTo: "head",
-      }}
-    >
-      <RAGContext.Provider value={{ config, baseUrl, recaptchaSiteKey }}>
-        {children}
-      </RAGContext.Provider>
-    </GoogleReCaptchaProvider>
+  const content = (
+    <RAGContext.Provider value={{ config, baseUrl, recaptchaSiteKey }}>
+      {children}
+    </RAGContext.Provider>
   );
+
+  // only wrap in GoogleReCaptchaProvider if the site key exists
+  if (recaptchaSiteKey) {
+    return (
+      <GoogleReCaptchaProvider
+        reCaptchaKey={recaptchaSiteKey}
+        scriptProps={{ async: true, defer: true, appendTo: "head" }}
+      >
+        {content}
+      </GoogleReCaptchaProvider>
+    );
+  }
+
+  return content;
 };
 
 export const useRAGConfig = () => {

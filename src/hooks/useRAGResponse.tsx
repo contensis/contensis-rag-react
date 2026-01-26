@@ -4,12 +4,10 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 const history = false;
 const stream = true;
 
-export const useRAGResponse = (config: string, baseUrl: string) => {
+export const useRAGResponse = (config: string, baseUrl: string, recaptchaSiteKey?: string) => {
   const [response, setResponse] = useState<string>(""); // accumulated streamed text
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
 
   /**
  * Asks a question and returns a response.
@@ -20,10 +18,19 @@ export const useRAGResponse = (config: string, baseUrl: string) => {
  */
   const ask = useCallback(
     async (question: string, sections?: string[]) => {
+
       let recaptchaToken: string | null = null;
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha("rag_search");
+      if (recaptchaSiteKey) {
+        try {
+          const { executeRecaptcha } = useGoogleReCaptcha();
+          if (executeRecaptcha) {
+            recaptchaToken = await executeRecaptcha("rag_search");
+          }
+        } catch (err) {
+          console.warn("reCAPTCHA skipped: no provider found");
+        }
       }
+
 
       setLoading(true);
       setError(null);
@@ -55,6 +62,18 @@ export const useRAGResponse = (config: string, baseUrl: string) => {
           headers,
         });
 
+        if (!payload.ok) {
+          let message = `Request failed (${payload.status})`;
+          try {
+            const json = await payload.json();
+            message = json?.message ?? message;
+          } catch {
+            const text = await payload.text();
+            if (text) message = text;
+          }
+          throw new Error(message);
+        }
+        
         if(payload.headers.has('X-Session-Id')) {
           // biome-ignore lint/style/noNonNullAssertion: We've just checked above.
           localStorage.setItem('rag-session-id', payload.headers.get('X-Session-Id')!);

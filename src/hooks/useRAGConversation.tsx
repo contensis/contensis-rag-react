@@ -6,12 +6,10 @@ type Message = {
   content: string;
 };
 
-export const useRAGConversation = (config: string, baseUrl: string) => {
+export const useRAGConversation = (config: string, baseUrl: string, recaptchaSiteKey?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-    const { executeRecaptcha } = useGoogleReCaptcha();
 
   /**
  * Asks a question and returns a response.
@@ -24,8 +22,15 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
     async (question: string, sections?: string[]) => {
 
       let recaptchaToken: string | null = null;
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha("rag_search");
+      if (recaptchaSiteKey) {
+        try {
+          const { executeRecaptcha } = useGoogleReCaptcha();
+          if (executeRecaptcha) {
+            recaptchaToken = await executeRecaptcha("rag_search");
+          }
+        } catch (err) {
+          console.warn("reCAPTCHA skipped: no provider found");
+        }
       }
 
       // add the user’s message immediately
@@ -59,6 +64,19 @@ export const useRAGConversation = (config: string, baseUrl: string) => {
           headers,
         });
 
+          if (!response.ok) {
+          let message = `Request failed (${response.status})`;
+          try {
+            const json = await response.json();
+            message = json?.message ?? message;
+          } catch {
+            // fallback if not JSON
+            const text = await response.text();
+            if (text) message = text;
+          }
+          throw new Error(message);
+        }
+        
         if(response.headers.has('X-Session-Id')) {
           // biome-ignore lint/style/noNonNullAssertion: We've just checked above.
           localStorage.setItem('rag-session-id', response.headers.get('X-Session-Id')!);
