@@ -2,7 +2,7 @@ export declare const useRAGResponseContext: () => {
     response: string;
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };
 export declare const useRAGConversationContext: () => {
     messages: {
@@ -11,5 +11,5 @@ export declare const useRAGConversationContext: () => {
     }[];
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };

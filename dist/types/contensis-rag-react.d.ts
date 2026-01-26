@@ -11,7 +11,7 @@ declare const useRAGResponseContext: () => {
     response: string;
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };
 declare const useRAGConversationContext: () => {
     messages: {
@@ -20,25 +20,25 @@ declare const useRAGConversationContext: () => {
     }[];
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };
 
-declare const useRAGResponse: (config: string, baseUrl: string) => {
+declare const useRAGResponse: (config: string, baseUrl: string, recaptchaSiteKey?: string) => {
     response: string;
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };
 
 type Message = {
     role: "user" | "assistant";
     content: string;
 };
-declare const useRAGConversation: (config: string, baseUrl: string) => {
+declare const useRAGConversation: (config: string, baseUrl: string, recaptchaSiteKey?: string) => {
     messages: Message[];
     loading: boolean;
     error: string | null;
-    ask: (question: string) => Promise<void>;
+    ask: (question: string, sections?: string[]) => Promise<void>;
 };
 
 export { RAGProvider, useRAGConversation, useRAGConversationContext, useRAGResponse, useRAGResponseContext };
